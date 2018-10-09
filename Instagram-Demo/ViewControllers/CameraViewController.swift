@@ -47,10 +47,21 @@ class CameraViewController: UIViewController, UIImagePickerControllerDelegate, U
     }
     
     @IBAction func didSubmit(_ sender: Any) {
-        Post.postUserImage(image: pickedImage.image, withCaption: captionField.text, withCompletion: nil)
-        tabBarController?.selectedIndex = 0
-        
+        Post.postUserImage(image: pickedImage.image!, withCaption: captionField.text ?? "") { (success: Bool, error: Error?) in
+            
+        if success {
+            self.tabBarController?.selectedIndex = 0
+            self.captionField.text = ""
+            NotificationCenter.default.post(name: NSNotification.Name(rawValue: "showAlert"), object: nil)
+            //self.pickedImage.image = UIImage(named:)
+            
+        }
+        else {
+            print("Error. Unable to submit post")
+        }
     }
+    }
+    
     
     func onDone() {
         

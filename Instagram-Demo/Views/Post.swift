@@ -1,16 +1,9 @@
-//
-//  Post.swift
-//  Instagram-Demo
-//
-//  Created by Amzad Chowdhury on 10/1/18.
-//  Copyright © 2018 Amzad Chowdhury. All rights reserved.
-//
-
 import UIKit
 import Parse
 
 class Post: PFObject, PFSubclassing {
-    @NSManaged var media: PFFile
+    @NSManaged var postImage : PFFile
+    @NSManaged var avatarImage : PFFile
     @NSManaged var author: PFUser
     @NSManaged var caption: String
     @NSManaged var likesCount: Int
@@ -32,19 +25,23 @@ class Post: PFObject, PFSubclassing {
      - parameter caption: Caption text input by the user
      - parameter completion: Block to be executed after save operation is complete
      */
-    class func postUserImage(image: UIImage?, withCaption caption: String?, withCompletion completion: PFBooleanResultBlock?) {
+    class func postUserImage(image: UIImage?, avatar: UIImage? = UIImage(named: "avatar-placeholder"), withCaption caption: String?, withCompletion completion: PFBooleanResultBlock?) {
         // use subclass approach
-        let post = PFObject(className: "Post")
+        let post = Post()
         
         // Add relevant fields to the object
-        post["media"] = getPFFileFromImage(image: image) // PFFile column type
-        post["author"] = PFUser.current() // Pointer column type that points to PFUser
-        post["caption"] = caption
-        post["likesCount"] = 0
-        post["commentsCount"] = 0
+        post.postImage = getPFFileFromImage(image: image)!
+        post.avatarImage = getPFFileFromImage(image: avatar)!
+        post.author = PFUser.current()!
+        post.caption = caption!
+        let number = Int.random(in: 0 ... 10)
+        let commentNumber = Int.random(in: 20 ... 200)
+        post.likesCount = number
+        post.commentsCount = commentNumber
         
         // Save object (following function will save the object in Parse asynchronously)
         post.saveInBackground(block: completion)
+    
     }
     
     /**
